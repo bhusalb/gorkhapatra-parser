@@ -31,7 +31,7 @@ function apiMiddleware(req, res, next) {
 var router = express.Router();
 
 /* GET users listing. */
-router.post('/notices', apiMiddleware, function (req, res, next) {
+router.get('/notices', function (req, res, next) {
     var date = req.body.date || new Date().toJSON().slice(0, 10);
     var image_folder_path = path.join(__dirname, '../../images/' + date);
     fs.readdir(image_folder_path, function (err, items) {
