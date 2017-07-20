@@ -1,4 +1,5 @@
 import urllib.request, json, cv2, numpy as np, os, os.path, uuid, urllib, sys, datetime
+from PIL import Image
 
 MIN_WIDTH = 300
 MIN_HIEGHT = 300
@@ -62,10 +63,14 @@ def find_contours(image_path, date, page_no):
     save_path = SAVE_IMAGE_PATH + '/' + date
     if not os.path.exists(save_path):
         os.mkdir(save_path)
+        os.mkdir(save_path + '/' + 'thumbs');
 
     for index, position in enumerate(contour_position):
         x, y, w, h = position
-        cv2.imwrite(save_path + '/' + str(page_no) + '_' + str(index) + '.png', im[y:(y + h), x:(x + w)])
+        image_name = str(page_no) + '_' + str(index) + '.png'
+        image_path = save_path + '/' + image_name
+        cv2.imwrite(image_path, im[y:(y + h), x:(x + w)])
+        generate_thumb(save_path, image_name)
 
 
 def is_overlapping(contour_position, given_position):
@@ -77,6 +82,12 @@ def is_overlapping(contour_position, given_position):
                 return False
 
     return True
+
+
+def generate_thumb(save_path, image_name, size=(200, 200)):
+    im = Image.open(save_path + '/' + image_name)
+    im.thumbnail(size)
+    im.save(save_path + "/thumbs/" + image_name)
 
 
 if len(sys.argv) > 1:
@@ -93,5 +104,5 @@ path = DOWNLOADED_IMAGE_PATH + '/' + parsing_date
 images = os.listdir(path)
 images.sort()
 
-for page_no,image in enumerate(images):
+for page_no, image in enumerate(images):
     find_contours(path + '/' + image, parsing_date, image.split('.')[0])
