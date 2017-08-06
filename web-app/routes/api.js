@@ -51,13 +51,28 @@ router.get('/notices', function (req, res, next) {
     // res.send('respond with a resource');
 });
 
-router.get('/notices/:id', function (req, res, next) {
+router.get('/notices/:id/thumb', function (req, res, next) {
+    get_notice_image(req, res, true);
+});
 
+router.get('/notices/:id', function (req, res, next) {
+    get_notice_image(req, res);
+});
+
+
+function get_notice_image(req, res, thumb = false) {
     try {
         var image_path = decrypt(req.params.id);
     } catch (e) {
         res.status(404).end();
     }
+
+    if (thumb) {
+        var dirs = image_path.split('/');
+        dirs[dirs.length - 1] = 'thumbs/' + dirs[dirs.length - 1];
+        image_path = dirs.join('/');
+    }
+
 
     fs.stat(image_path, function (err, exists) {
         if (!err)
@@ -65,6 +80,6 @@ router.get('/notices/:id', function (req, res, next) {
 
         res.status(404);
     });
-});
+}
 
 module.exports = router;
