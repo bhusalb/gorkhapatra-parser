@@ -6,15 +6,15 @@ var crypto = require('crypto'),
     password = 'assaas';
 
 function encrypt(text) {
-    var cipher = crypto.createCipher(algorithm, password)
-    var crypted = cipher.update(text, 'utf8', 'hex')
+    var cipher = crypto.createCipher(algorithm, password);
+    var crypted = cipher.update(text, 'utf8', 'hex');
     crypted += cipher.final('hex');
     return crypted;
 }
 
 function decrypt(text) {
-    var decipher = crypto.createDecipher(algorithm, password)
-    var dec = decipher.update(text, 'hex', 'utf8')
+    var decipher = crypto.createDecipher(algorithm, password);
+    var dec = decipher.update(text, 'hex', 'utf8');
     dec += decipher.final('utf8');
     return dec;
 }
@@ -31,7 +31,7 @@ function apiMiddleware(req, res, next) {
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/notices', function (req, res, next) {
+router.get('/notices', apiMiddleware, function (req, res, next) {
     var date = req.body.date || new Date().toJSON().slice(0, 10);
     var image_folder_path = path.join(__dirname, '../../images/' + date);
     fs.readdir(image_folder_path, function (err, items) {
@@ -52,11 +52,11 @@ router.get('/notices', function (req, res, next) {
 });
 
 router.get('/notices/:id/thumb', function (req, res, next) {
-    get_notice_image(req, res, true);
+    return get_notice_image(req, res, true);
 });
 
 router.get('/notices/:id', function (req, res, next) {
-    get_notice_image(req, res);
+    return get_notice_image(req, res);
 });
 
 
@@ -64,7 +64,7 @@ function get_notice_image(req, res, thumb = false) {
     try {
         var image_path = decrypt(req.params.id);
     } catch (e) {
-        res.status(404).end();
+        return res.status(404).end();
     }
 
     if (thumb) {

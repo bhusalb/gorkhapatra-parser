@@ -4,6 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var Slack = require('slack-node');
+slack = new Slack('xoxp-225220722625-225813342820-225816458372-3111896c3196b1943ee87bd9f1a7f098');
 
 var index = require('./routes/index');
 var api = require('./routes/api');
@@ -23,9 +25,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
-
-
 app.use('/', index);
 app.use('/api', api);
 
@@ -41,6 +40,13 @@ app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
+    if (err.status == undefined)
+        slack.api('chat.postMessage', {
+            text: '[Node Error]:' + err,
+            channel: '#general'
+        }, function (err, response) {
+            console.log(response);
+        });
 
     // render the error page
     res.status(err.status || 500);

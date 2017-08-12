@@ -1,10 +1,14 @@
 import urllib.request, json, cv2, numpy as np, os, os.path, uuid, urllib, sys, datetime
 from PIL import Image
+from slacker import Slacker
+
+slack = Slacker('xoxp-225220722625-225813342820-225816458372-3111896c3196b1943ee87bd9f1a7f098')
 
 MIN_WIDTH = 300
 MIN_HIEGHT = 300
 DOWNLOADED_IMAGE_PATH = os.getcwd() + '/' + "raw_images"
 SAVE_IMAGE_PATH = os.getcwd() + '/' + 'images'
+notice_count = 0;
 
 
 def get_json(date):
@@ -29,6 +33,7 @@ download_single_photo.image_counter = 0
 
 
 def find_contours(image_path, date, page_no):
+    global notice_count
     im = cv2.imread(image_path)
     hsv_img = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
     COLOR_MIN = np.array([0, 0, 0], np.uint8)
@@ -70,6 +75,7 @@ def find_contours(image_path, date, page_no):
         image_name = str(page_no) + '_' + str(index) + '.png'
         image_path = save_path + '/' + image_name
         cv2.imwrite(image_path, im[y:(y + h), x:(x + w)])
+        notice_count += 1
         generate_thumb(save_path, image_name)
 
 
@@ -90,19 +96,31 @@ def generate_thumb(save_path, image_name, size=(200, 200)):
     im.save(save_path + "/thumbs/" + image_name)
 
 
+#            code             #
 if len(sys.argv) > 1:
     parsing_date = sys.argv[0]
 else:
     parsing_date = str(datetime.date.today())
 
-crawl_data = get_json(parsing_date)
+if not os.path.exists('images/' + parsing_date):
 
-for page in crawl_data['pages']:
-    download_single_photo(page['preview']['largest'], parsing_date)
+    slack.chat.post_message('#general', '[Python]: Crawling Started for ' + parsing_date)
 
-path = DOWNLOADED_IMAGE_PATH + '/' + parsing_date
-images = os.listdir(path)
-images.sort()
+    try:
+        crawl_data = get_json(parsing_date)
 
-for page_no, image in enumerate(images):
-    find_contours(path + '/' + image, parsing_date, image.split('.')[0])
+        for page in crawl_data['pages']:
+            download_single_photo(page['preview']['largest'], parsing_date)
+
+        path = DOWNLOADED_IMAGE_PATH + '/' + parsing_date
+        images = os.listdir(path)
+        images.sort()
+
+        for page_no, image in enumerate(images):
+            find_contours(path + '/' + image, parsing_date, image.split('.')[0])
+
+        slack.chat.post_message('#general',
+                                '[Python]: Crawling Completed for ' + parsing_date + ' \n total notices: ' + str(notice_count))
+    except:
+        print(sys.exc_info())
+        slack.chat.post_message('#general', '[Python Error]:' + str(sys.exc_info()))
