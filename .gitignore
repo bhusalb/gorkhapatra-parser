@@ -1,5 +1,5 @@
 web-app/node_modules/
 web-app/.idea/
 .idea/
-images/
-raw_images/
+images/*
+raw_images/*
