@@ -6,8 +6,8 @@ slack = Slacker('xoxp-225220722625-225813342820-225816458372-3111896c3196b1943ee
 
 MIN_WIDTH = 300
 MIN_HIEGHT = 300
-DOWNLOADED_IMAGE_PATH = os.getcwd() + '/' + "raw_images"
-SAVE_IMAGE_PATH = os.getcwd() + '/' + 'images'
+DOWNLOADED_IMAGE_PATH = os.path.dirname(os.path.realpath(__file__)) + '/' + "raw_images"
+SAVE_IMAGE_PATH = os.path.dirname(os.path.realpath(__file__)) + '/' + 'images'
 notice_count = 0;
 
 
