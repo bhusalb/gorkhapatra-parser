@@ -6,9 +6,10 @@ slack = Slacker('xoxp-225220722625-225813342820-225816458372-3111896c3196b1943ee
 
 MIN_WIDTH = 300
 MIN_HIEGHT = 300
-DOWNLOADED_IMAGE_PATH = os.path.dirname(os.path.realpath(__file__)) + '/' + "raw_images"
-SAVE_IMAGE_PATH = os.path.dirname(os.path.realpath(__file__)) + '/' + 'images'
-notice_count = 0;
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
+DOWNLOADED_IMAGE_PATH = ROOT_DIR + '/' + "raw_images"
+SAVE_IMAGE_PATH = ROOT_DIR + '/' + 'images'
+notice_count = 0
 
 
 def get_json(date):
@@ -102,7 +103,7 @@ if len(sys.argv) > 1:
 else:
     parsing_date = str(datetime.date.today())
 
-if not os.path.exists('images/' + parsing_date):
+if not os.path.exists(ROOT_DIR + '/images/' + parsing_date):
 
     slack.chat.post_message('#general', '[Python]: Crawling Started for ' + parsing_date)
 
@@ -120,7 +121,8 @@ if not os.path.exists('images/' + parsing_date):
             find_contours(path + '/' + image, parsing_date, image.split('.')[0])
 
         slack.chat.post_message('#general',
-                                '[Python]: Crawling Completed for ' + parsing_date + ' \n total notices: ' + str(notice_count))
+                                '[Python]: Crawling Completed for ' + parsing_date + ' \n total notices: ' + str(
+                                    notice_count))
     except:
         print(sys.exc_info())
         slack.chat.post_message('#general', '[Python Error]:' + str(sys.exc_info()))
