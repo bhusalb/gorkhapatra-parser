@@ -4,6 +4,7 @@ from slacker import Slacker
 
 slack = Slacker('xoxp-271279755347-271497605013-274271930980-d23c139db253fb1232865ef5f5ce369d')
 
+
 MIN_WIDTH = 300
 MIN_HIEGHT = 300
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
