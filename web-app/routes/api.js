@@ -45,10 +45,17 @@ router.post('/notices', apiMiddleware, function (req, res, next) {
 
         res.json(encoded_items);
     });
+});
 
-    // res.send(date);
-    //
-    // res.send('respond with a resource');
+router.get('/notices/archives', apiMiddleware, function (req, res, next) {
+    console.log('hello');
+    var image_folder_path = path.join(__dirname, '../../images');
+    fs.readdir(image_folder_path, function (err, items) {
+        if (!items)
+            return res.status(404).end();
+
+        res.json(items);
+    });
 });
 
 router.get('/notices/:id/thumb', function (req, res, next) {

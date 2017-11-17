@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var Slack = require('slack-node');
-slack = new Slack('xoxp-225220722625-225813342820-225816458372-3111896c3196b1943ee87bd9f1a7f098');
+slack = new Slack('xoxp-271279755347-271497605013-274184135698-272a07cc14ef707a9d8bb09401c5074f');
 
 var index = require('./routes/index');
 var api = require('./routes/api');
@@ -43,7 +43,7 @@ app.use(function (err, req, res, next) {
     if (err.status == undefined)
         slack.api('chat.postMessage', {
             text: '[Node Error]:' + err,
-            channel: '#general'
+            channel: '#logs'
         }, function (err, response) {
             console.log(response);
         });

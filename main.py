@@ -2,7 +2,7 @@ import urllib.request, json, cv2, numpy as np, os, os.path, uuid, urllib, sys, d
 from PIL import Image
 from slacker import Slacker
 
-slack = Slacker('xoxp-225220722625-225813342820-225816458372-3111896c3196b1943ee87bd9f1a7f098')
+slack = Slacker('xoxp-271279755347-271497605013-274184135698-272a07cc14ef707a9d8bb09401c5074f')
 
 MIN_WIDTH = 300
 MIN_HIEGHT = 300
