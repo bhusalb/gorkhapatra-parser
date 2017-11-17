@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var Slack = require('slack-node');
-slack = new Slack('xoxp-271279755347-271497605013-274184135698-272a07cc14ef707a9d8bb09401c5074f');
+slack = new Slack('xoxp-271279755347-271497605013-274271930980-d23c139db253fb1232865ef5f5ce369d');
 
 var index = require('./routes/index');
 var api = require('./routes/api');

@@ -2,7 +2,7 @@ import urllib.request, json, cv2, numpy as np, os, os.path, uuid, urllib, sys, d
 from PIL import Image
 from slacker import Slacker
 
-slack = Slacker('xoxp-271279755347-271497605013-274184135698-272a07cc14ef707a9d8bb09401c5074f')
+slack = Slacker('xoxp-271279755347-271497605013-274271930980-d23c139db253fb1232865ef5f5ce369d')
 
 MIN_WIDTH = 300
 MIN_HIEGHT = 300
@@ -105,7 +105,7 @@ else:
 
 if not os.path.exists(ROOT_DIR + '/images/' + parsing_date):
 
-    slack.chat.post_message('#general', '[Python]: Crawling Started for ' + parsing_date)
+    slack.chat.post_message('#logs', '[Python]: Crawling Started for ' + parsing_date)
 
     try:
         crawl_data = get_json(parsing_date)
@@ -120,9 +120,9 @@ if not os.path.exists(ROOT_DIR + '/images/' + parsing_date):
         for page_no, image in enumerate(images):
             find_contours(path + '/' + image, parsing_date, image.split('.')[0])
 
-        slack.chat.post_message('#general',
+        slack.chat.post_message('#logs',
                                 '[Python]: Crawling Completed for ' + parsing_date + ' \n total notices: ' + str(
                                     notice_count))
     except:
         print(sys.exc_info())
-        slack.chat.post_message('#general', '[Python Error]:' + str(sys.exc_info()))
+        slack.chat.post_message('#logs', '[Python Error]:' + str(sys.exc_info()))

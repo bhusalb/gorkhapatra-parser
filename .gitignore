@@ -4,3 +4,8 @@ web-app/.idea/
 images/*
 raw_images/*
 .idea/workspace.xml
+penv/
+images/
+raw_images/
+web-app/public/images/
+web-app/public/javascripts/
