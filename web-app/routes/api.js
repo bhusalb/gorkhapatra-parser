@@ -66,6 +66,11 @@ router.get('/notices/:id', function (req, res, next) {
     return get_notice_image(req, res);
 });
 
+router.get('/about-us', function (req, res, next) {
+    return   res.sendFile(path.join(__dirname, '../views/api/about-us.html'));
+});
+
+
 
 function get_notice_image(req, res, thumb = false) {
     try {
