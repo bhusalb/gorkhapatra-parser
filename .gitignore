@@ -11,3 +11,7 @@ web-app/public/images/
 web-app/public/javascripts/
 deleted-images/*
 .env
+filters/__pycache__/
+core/__pycache__/
+config/__pycache__/
+
