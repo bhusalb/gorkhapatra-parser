@@ -21,7 +21,7 @@ def send_crawling_ended_message_on_slack(parsing_date):
 def send_push_notification_using_fcm(date):
     notice_count = get_images_count_in_specific_date(date)
     if notice_count:
-        push_service.notify_topic_subscribers(topic_name="notices", message_body={
+        message = {
             'en': {
                 'alert_title': 'Notices',
                 'alert_message': PUSH_NOTIFICATION_MESSAGE_EN % (str(notice_count)),
@@ -30,4 +30,7 @@ def send_push_notification_using_fcm(date):
                 'alert_title': 'सूचनाहरू',
                 'alert_message': PUSH_NOTIFICATION_MESSAGE_NP % (str(notice_count)),
             }
-        })
+        }
+
+        print(message)
+        push_service.notify_topic_subscribers(topic_name="notices", message_body=message)

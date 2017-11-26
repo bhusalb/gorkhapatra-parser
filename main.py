@@ -22,7 +22,6 @@ if not os.path.exists(ROOT_DIR + '/images/' + parsing_date) or True:
 
         download_raw_images(parsing_date)
         manipulate_images(parsing_date)
-
         if APP_ENV == 'production':
             send_crawling_ended_message_on_slack(parsing_date)
             if args.send_push_notification:
