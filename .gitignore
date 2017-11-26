@@ -9,3 +9,5 @@ images/
 raw_images/
 web-app/public/images/
 web-app/public/javascripts/
+deleted-images/*
+.env

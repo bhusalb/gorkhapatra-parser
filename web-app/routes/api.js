@@ -4,6 +4,7 @@ var path = require('path');
 var crypto = require('crypto'),
     algorithm = 'aes-256-ctr',
     password = 'assaas';
+var helpers = require('../utils/helpers')
 
 function encrypt(text) {
     var cipher = crypto.createCipher(algorithm, password);
@@ -14,6 +15,7 @@ function encrypt(text) {
 
 function decrypt(text) {
     var decipher = crypto.createDecipher(algorithm, password);
+    decipher.setAutoPadding(false);
     var dec = decipher.update(text, 'hex', 'utf8');
     dec += decipher.final('utf8');
     return dec;
@@ -35,8 +37,15 @@ router.post('/notices', apiMiddleware, function (req, res, next) {
     var date = req.body.date || new Date().toJSON().slice(0, 10);
     var image_folder_path = path.join(__dirname, '../../images/' + date);
     fs.readdir(image_folder_path, function (err, items) {
-        if (!items)
+
+        if (!items || err)
             return res.status(404).end();
+
+        items = items.filter(function (item) {
+            return item.split('/').pop() != 'thumbs';
+        });
+
+        items.sort(helpers.natural_sort);
 
         var encoded_items = [];
         items.forEach(function (item) {
@@ -51,6 +60,7 @@ router.get('/notices/archives', apiMiddleware, function (req, res, next) {
     console.log('hello');
     var image_folder_path = path.join(__dirname, '../../images');
     fs.readdir(image_folder_path, function (err, items) {
+
         if (!items)
             return res.status(404).end();
 
@@ -67,9 +77,14 @@ router.get('/notices/:id', function (req, res, next) {
 });
 
 router.get('/about-us', function (req, res, next) {
-    return   res.sendFile(path.join(__dirname, '../views/api/about-us.html'));
+    return res.sendFile(path.join(__dirname, '../views/api/about-us.html'));
 });
 
+
+router.get('/test', function (req, res, next) {
+    console.log('over here');
+    return res.send(decrypt('182172fed654dd130a8b03422432d28caff035b9ced2ff00dff876b56b2e6a7689682a0ce0ebf3d57d'));
+});
 
 
 function get_notice_image(req, res, thumb = false) {
@@ -93,5 +108,6 @@ function get_notice_image(req, res, thumb = false) {
         res.status(404);
     });
 }
+
 
 module.exports = router;

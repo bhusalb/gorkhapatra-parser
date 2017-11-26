@@ -1,129 +1,34 @@
-import urllib.request, json, cv2, numpy as np, os, os.path, uuid, urllib, sys, datetime
-from PIL import Image
-from slacker import Slacker
+import os.path
+import datetime
+from config.constants import *
+from core.helpers import *
+from core.notification import *
+import argparse
 
-slack = Slacker('xoxp-271279755347-271497605013-274271930980-d23c139db253fb1232865ef5f5ce369d')
+parser = argparse.ArgumentParser()
+parser.add_argument('--date', type=str, default=str(datetime.date.today()))
+parser.add_argument('--send-push-notification', type=bool, default=False)
+args = parser.parse_args()
 
-
-MIN_WIDTH = 300
-MIN_HIEGHT = 300
-ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
-DOWNLOADED_IMAGE_PATH = ROOT_DIR + '/' + "raw_images"
-SAVE_IMAGE_PATH = ROOT_DIR + '/' + 'images'
-notice_count = 0
-
-
-def get_json(date):
-    contents = str(
-        urllib.request.urlopen("http://gorkhapatraonline.com/epaper/getdata/gorkhapatra?time=" + date).read().decode(
-            "utf-8"))
-    return json.loads(contents)
-
-
-def download_single_photo(img_url, date):
-    download_single_photo.image_counter += 1
-    path = DOWNLOADED_IMAGE_PATH + '/' + date
-    if not os.path.exists(path):
-        os.mkdir(path)
-
-    file_path = "%s%s%s" % (path, '/', str(download_single_photo.image_counter) + '.jpg')
-    print(file_path)
-    urllib.request.urlretrieve(img_url, file_path)
-
+print(args)
 
 download_single_photo.image_counter = 0
+parsing_date = args.date
 
-
-def find_contours(image_path, date, page_no):
-    global notice_count
-    im = cv2.imread(image_path)
-    hsv_img = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
-    COLOR_MIN = np.array([0, 0, 0], np.uint8)
-    COLOR_MAX = np.array([40, 40, 40], np.uint8)
-    frame_threshed = cv2.inRange(im, COLOR_MIN, COLOR_MAX)
-    imgray = frame_threshed
-    ret, thresh = cv2.threshold(frame_threshed, 127, 255, 0)
-    image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-    # Find the index of the largest contour
-    contour_position = [];
-    for index, cnt in enumerate(contours):
-        x, y, w, h = cv2.boundingRect(cnt)
-
-        position = (x, y, w, h)
-
-        if w > MIN_WIDTH and h > MIN_HIEGHT:
-            result = is_overlapping(contour_position, position)
-            print(result)
-            if type(result) == int:
-                contour_position[result] = position
-            else:
-                if result:
-                    contour_position.append(position)
-
-    # Check whether is backwhite or not
-    color_boundaries = [
-        ([235, 235, 235], [255, 255, 255]),
-        ([0, 0, 0], [20, 20, 20])
-    ]
-
-    save_path = SAVE_IMAGE_PATH + '/' + date
-    if not os.path.exists(save_path):
-        os.mkdir(save_path)
-        os.mkdir(save_path + '/' + 'thumbs');
-
-    for index, position in enumerate(contour_position):
-        x, y, w, h = position
-        image_name = str(page_no) + '_' + str(index) + '.png'
-        image_path = save_path + '/' + image_name
-        cv2.imwrite(image_path, im[y:(y + h), x:(x + w)])
-        notice_count += 1
-        generate_thumb(save_path, image_name)
-
-
-def is_overlapping(contour_position, given_position):
-    for index, position in enumerate(contour_position):
-        if abs(position[0] - given_position[0]) < 150 and abs(position[1] - given_position[1]) < 150:
-            if position[2] < given_position[2] or position[3] < given_position[3]:
-                return index
-            else:
-                return False
-
-    return True
-
-
-def generate_thumb(save_path, image_name, size=(200, 200)):
-    im = Image.open(save_path + '/' + image_name)
-    im.thumbnail(size)
-    im.save(save_path + "/thumbs/" + image_name)
-
-
-#            code             #
-if len(sys.argv) > 1:
-    parsing_date = sys.argv[0]
-else:
-    parsing_date = str(datetime.date.today())
-
-if not os.path.exists(ROOT_DIR + '/images/' + parsing_date):
-
-    slack.chat.post_message('#logs', '[Python]: Crawling Started for ' + parsing_date)
-
+if not os.path.exists(ROOT_DIR + '/images/' + parsing_date) or True:
     try:
-        crawl_data = get_json(parsing_date)
+        if APP_ENV == 'production':
+            send_crawling_started_message_on_slack(parsing_date)
 
-        for page in crawl_data['pages']:
-            download_single_photo(page['preview']['largest'], parsing_date)
+        download_raw_images(parsing_date)
+        manipulate_images(parsing_date)
 
-        path = DOWNLOADED_IMAGE_PATH + '/' + parsing_date
-        images = os.listdir(path)
-        images.sort()
+        if APP_ENV == 'production':
+            send_crawling_ended_message_on_slack(parsing_date)
+            if args.send_push_notification:
+                send_push_notification_using_fcm(parsing_date)
 
-        for page_no, image in enumerate(images):
-            find_contours(path + '/' + image, parsing_date, image.split('.')[0])
-
-        slack.chat.post_message('#logs',
-                                '[Python]: Crawling Completed for ' + parsing_date + ' \n total notices: ' + str(
-                                    notice_count))
     except:
         print(sys.exc_info())
-        slack.chat.post_message('#logs', '[Python Error]:' + str(sys.exc_info()))
+        if APP_ENV == 'production':
+            slack.chat.post_message('#logs', '[Python Error]:' + str(sys.exc_info()))
