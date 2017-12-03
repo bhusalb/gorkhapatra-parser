@@ -1,12 +1,12 @@
 import cv2
 from .base import BaseFilter
-from core import helpers
+import core.helpers
 
 
 class RemoveIfNotText(BaseFilter):
     @staticmethod
     def run(date):
-        images = helpers.get_images_in_specific_date(date)
+        images = core.helpers.get_images_in_specific_date(date)
         for image_path in images:
             captch_ex(image_path)
 

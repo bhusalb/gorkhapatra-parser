@@ -1,5 +1,5 @@
 from filters.base import BaseFilter
-from core import helpers
+import core.helpers
 import cv2
 from config.constants import *
 import shutil
@@ -9,7 +9,7 @@ class RemoveFaces(BaseFilter):
     @staticmethod
     def run(date):
         print('Remove face running')
-        images = helpers.get_images_in_specific_date(date)
+        images = core.helpers.get_images_in_specific_date(date)
         faceCascade = cv2.CascadeClassifier(ROOT_DIR + '/opencv_files/frontalface.xml')
         eyeCascade = cv2.CascadeClassifier(ROOT_DIR + '/opencv_files/eye.xml')
         movePath = ROOT_DIR + '/deleted_images/' + date + '/RemoveFaces'

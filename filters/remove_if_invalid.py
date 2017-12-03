@@ -1,5 +1,5 @@
 from filters.base import BaseFilter
-from core import helpers
+import core.helpers
 import cv2
 from config.constants import *
 import shutil
@@ -9,8 +9,8 @@ class RemoveInvalidNotices(BaseFilter):
     @staticmethod
     def run(date):
         print('Remove Invalid Notices running')
-        images = helpers.get_images_in_specific_date(date)
-        invalid_images = helpers.get_invalid_images()
+        images = core.helpers.get_images_in_specific_date(date)
+        invalid_images = core.helpers.get_invalid_images()
         move_path = ROOT_DIR + '/deleted_images/' + date + '/RemoveInvalidNotices'
         for image_path in images:
             image = cv2.imread(image_path)
