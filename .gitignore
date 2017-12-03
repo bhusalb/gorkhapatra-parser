@@ -9,7 +9,7 @@ images/
 raw_images/
 web-app/public/images/
 web-app/public/javascripts/
-deleted-images/*
+deleted-images/
 .env
 filters/__pycache__/
 core/__pycache__/

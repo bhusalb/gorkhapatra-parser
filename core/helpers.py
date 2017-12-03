@@ -116,3 +116,10 @@ def get_images_in_specific_date(date):
     path = SAVE_IMAGE_PATH + '/' + date + '/'
     return [path + name for name in os.listdir(path) if
             os.path.isfile(path + name)]
+
+
+def get_invalid_images():
+    path = ROOT_DIR + '/' + 'invalid_images' + '/'
+
+    return [path + name for name in os.listdir(path) if
+            os.path.isfile(path + name)]

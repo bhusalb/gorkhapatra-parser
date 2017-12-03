@@ -25,12 +25,16 @@ def send_push_notification_using_fcm(date):
             'en': {
                 'alert_title': 'Notices',
                 'alert_message': PUSH_NOTIFICATION_MESSAGE_EN % (str(notice_count)),
+                'data': ' ',
+                'type': ''
             },
-            'np': {
+            'ne': {
                 'alert_title': 'सूचनाहरू',
                 'alert_message': PUSH_NOTIFICATION_MESSAGE_NP % (str(notice_count)),
+                'data': ' ',
+                'type': ''
             }
         }
 
         print(message)
-        push_service.notify_topic_subscribers(topic_name="notices", message_body=message)
+        push_service.notify_topic_subscribers(topic_name="notices", data_message=message)
