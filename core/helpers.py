@@ -1,4 +1,4 @@
-import urllib.request, json, cv2, numpy as np, os, os.path, uuid, urllib, sys, datetime
+import urllib.request, json, cv2, numpy as np, os, os.path, uuid, urllib, sys, datetime, csv
 from PIL import Image
 from config.constants import *
 from filters.remove_if_overlap import RemoveIfOverlap
@@ -123,3 +123,26 @@ def get_invalid_images():
 
     return [path + name for name in os.listdir(path) if
             os.path.isfile(path + name)]
+
+
+def log_crawl_status_locally(log):
+    add_header = False
+    if not os.path.exists(LOG_FILE):
+        add_header = True
+    log['logged_time'] = datetime.datetime.utcnow()
+    with open(LOG_FILE, 'a+') as log_file:
+        field_names = ['date', 'crawl_status', 'logged_time', 'download_count', 'err']
+        writer = csv.DictWriter(log_file, fieldnames=field_names)
+        if add_header:
+            writer.writeheader()
+        writer.writerow(log)
+
+
+def check_log_file_if_crawl_successfully_or_not(parsing_date):
+    with open(LOG_FILE, 'r') as log_file:
+        reader = csv.DictReader(log_file)
+        for row in reader:
+            if (row['date'] == parsing_date) and (row['crawl_status'] == 'success'):
+                return True
+
+    return False

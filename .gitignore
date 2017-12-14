@@ -14,4 +14,5 @@ deleted-images/
 filters/__pycache__/
 core/__pycache__/
 config/__pycache__/
+daily.log
 
