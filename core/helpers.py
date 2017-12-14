@@ -139,6 +139,8 @@ def log_crawl_status_locally(log):
 
 
 def check_log_file_if_crawl_successfully_or_not(parsing_date):
+    if not os.path.exists(LOG_FILE):
+        return False
     with open(LOG_FILE, 'r') as log_file:
         reader = csv.DictReader(log_file)
         for row in reader:
