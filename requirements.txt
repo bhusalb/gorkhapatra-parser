@@ -1,6 +1,8 @@
 certifi==2017.7.27.1
 chardet==3.0.4
 click==6.7
+facebooktoken==0.0.1
+facepy==1.0.9
 idna==2.5
 numpy==1.13.0
 olefile==0.44
@@ -8,7 +10,9 @@ opencv-python==3.2.0.7
 Pillow==4.2.1
 pyfcm==1.4.3
 python-dotenv==0.7.1
+recordtype==1.1
 requests==2.18.3
 requests-toolbelt==0.8.0
+six==1.11.0
 slacker==0.9.50
 urllib3==1.22
