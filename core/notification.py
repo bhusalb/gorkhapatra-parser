@@ -7,6 +7,10 @@ slack = Slacker(SLACK_API_KEY)
 push_service = FCMNotification(api_key=FIRE_BASE_API_KEY)
 
 
+def send_message_on_slack(message):
+    slack.chat.post_message('#logs', '[Python]: ' + message)
+
+
 def send_crawling_started_message_on_slack(parsing_date):
     slack.chat.post_message('#logs', '[Python]: Crawling Started for ' + parsing_date)
 
