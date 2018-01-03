@@ -33,3 +33,9 @@ class BaseSocial:
         caption = captions[random.randint(0, len(captions))];
 
         return caption.replace('[DATE]', caption_date)
+
+    @staticmethod
+    def get_random_caption_for_type(caption_type):
+        captions = json.load(open(os.path.join(constants.ROOT_DIR, 'social/' + caption_type + '.json')))
+        caption = captions[random.randint(0, len(captions))];
+        return caption

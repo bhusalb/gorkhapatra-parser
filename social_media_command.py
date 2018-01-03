@@ -6,7 +6,8 @@ import argparse
 from config.constants import *
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--date', type=str, default=str(datetime.date.today() - datetime.timedelta(days=1)))
+parser.add_argument('--image', type=str)
+parser.add_argument('--type', type=str)
 
 args = parser.parse_args()
 
@@ -15,7 +16,8 @@ print(args)
 facebook = Facebook.Facebook()
 
 try:
-    facebook.post(args.date)
+    if args.image and args.type:
+        facebook.post_by_command(args.image, args.type)
 except:
     if APP_ENV == 'production':
         notification.send_message_on_slack(str(sys.exc_info()))
